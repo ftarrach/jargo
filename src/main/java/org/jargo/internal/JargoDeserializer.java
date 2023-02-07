@@ -8,9 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.RecordComponent;
-import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +22,8 @@ import java.util.Set;
 import static org.jargo.internal.R.enumFromValue;
 import static org.jargo.internal.R.getDefaultRecordConstructor;
 import static org.jargo.internal.R.getNameToPositionMap;
-import static org.jargo.internal.R.getRecordComponentByName;
+import static org.jargo.internal.R.getRecordComponents;
+import static org.jargo.internal.R.getTargetByName;
 import static org.jargo.internal.R.isBoolean;
 import static org.jargo.internal.R.isByte;
 import static org.jargo.internal.R.isChar;
@@ -35,11 +34,8 @@ import static org.jargo.internal.R.isNotOptionalRecursive;
 import static org.jargo.internal.R.isShort;
 import static org.jargo.internal.R.isValueRecord;
 
-// TODO: (tarrach): remove all calls to getRecordComponents - use R (cached) instead
 @SuppressWarnings("unchecked")
 public class JargoDeserializer {
-
-  record Target<T>(Class<T> clazz, List<Class<?>> generics) {}
 
   private final JsonFactory jsonFactory;
 
@@ -162,8 +158,7 @@ public class JargoDeserializer {
   private <T extends Record> T deserializeValueRecord(JsonParser parser, Target<T> target) throws IOException {
     Class<T> targetClass = target.clazz();
     Constructor<T> defaultRecordConstructor = getDefaultRecordConstructor(targetClass);
-    RecordComponent component = targetClass.getRecordComponents()[0];
-    Target<?> itemTarget = componentToTarget(component);
+    Target<?> itemTarget = R.getTargetByName(targetClass, "value");
     Object value = doDeserialize(parser, itemTarget);
     try {
       return defaultRecordConstructor.newInstance(value);
@@ -176,13 +171,12 @@ public class JargoDeserializer {
     Map<String, Integer> nameToPositionMap = getNameToPositionMap(target.clazz());
     Object[] parameters = new Object[nameToPositionMap.size()];
     parser.isExpectedStartObjectToken();
-    RecordComponent[] recordComponents = target.clazz().getRecordComponents();
+    RecordComponent[] recordComponents = getRecordComponents(target.clazz());
     Set<String> required = getRequiredTypes(recordComponents);
     while (parser.nextToken() != JsonToken.END_OBJECT) {
       String fieldName = parser.getValueAsString();
       parser.nextToken();
-      RecordComponent component = getRecordComponentByName(target.clazz(), fieldName);
-      Target<?> itemTarget = componentToTarget(component);
+      Target<?> itemTarget = getTargetByName(target.clazz(), fieldName);
       Object deserializedValue = doDeserialize(parser, itemTarget);
       int pos = nameToPositionMap.get(fieldName);
       parameters[pos] = deserializedValue;
@@ -207,7 +201,7 @@ public class JargoDeserializer {
   private Object createEmpty(Class<?> type) throws IOException {
     if (type == Optional.class) return Optional.empty();
     else if (type.isRecord()) {
-      RecordComponent[] recordComponents = type.getRecordComponents();
+      RecordComponent[] recordComponents = getRecordComponents(type);
       Constructor<? extends Record> defaultRecordConstructor = getDefaultRecordConstructor((Class<? extends Record>) type);
       Object[] params = new Object[defaultRecordConstructor.getParameterTypes().length];
       for (int i = 0; i < recordComponents.length; i++) {
@@ -227,31 +221,12 @@ public class JargoDeserializer {
     }
   }
 
-  private Set<String> getRequiredTypes(RecordComponent[] expectedTypes) throws IOException {
+  private Set<String> getRequiredTypes(RecordComponent[] expectedTypes) {
     Set<String> required = new HashSet<>();
-    for (RecordComponent component : expectedTypes) {
-      if (isNotOptionalRecursive(component.getType())) {
+    for (RecordComponent component : expectedTypes)
+      if (isNotOptionalRecursive(component.getType()))
         required.add(component.getName());
-      }
-    }
     return required;
-  }
-
-  private Target<?> componentToTarget(RecordComponent recordComponent) {
-    Class<?> type = recordComponent.getType();
-    if (List.class == type) {
-      Class<?> generic = (Class<?>) ((ParameterizedType) recordComponent.getGenericType()).getActualTypeArguments()[0];
-      return new Target<>(type, List.of(generic));
-    } else if (Map.class == type) {
-      Type[] typeArguments = ((ParameterizedType) recordComponent.getGenericType()).getActualTypeArguments();
-      Class<?> key = (Class<?>) typeArguments[0];
-      Class<?> value = (Class<?>) typeArguments[1];
-      return new Target<>(type, List.of(key, value));
-    } else if (Optional.class == type) {
-      Class<?> generic = (Class<?>) ((ParameterizedType) recordComponent.getGenericType()).getActualTypeArguments()[0];
-      return new Target<>(type, List.of(generic));
-    }
-    return new Target<>(type, List.of());
   }
 
 }
