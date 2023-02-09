@@ -32,9 +32,7 @@ public class JargoSerializer {
 
   private void doSerialize(JsonGenerator generator, Object object) throws IOException {
     if (object == null) { /* omit null values */ }
-    else if (Byte.class.equals(object.getClass())) generator.writeNumber((byte) object);
     else if (Character.class.equals(object.getClass())) generator.writeString(String.valueOf(object));
-    else if (Short.class.equals(object.getClass())) generator.writeNumber((short) object);
     else if (Integer.class.equals(object.getClass())) generator.writeNumber((int) object);
     else if (Long.class.equals(object.getClass())) generator.writeNumber((long) object);
     else if (Double.class.equals(object.getClass())) generator.writeNumber((double) object);

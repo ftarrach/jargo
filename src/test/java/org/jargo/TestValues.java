@@ -21,9 +21,7 @@ public class TestValues {
   }
 
   public static class Value {
-    public record ByteValue(byte value) {}
     public record CharValue(char value) {}
-    public record ShortValue(short value) {}
     public record IntValue(int value) {}
     public record LongValue(long value) {}
     public record DoubleValue(double value) {}
@@ -37,9 +35,7 @@ public class TestValues {
 
   public static class Rec {
     public record PrimitiveRecord(
-        byte _byte,
         char _char,
-        short _short,
         int _int,
         long _long,
         double _double,
@@ -48,9 +44,7 @@ public class TestValues {
     ) {}
 
     public record ValueRecord(
-        Value.ByteValue _byte,
         Value.CharValue _char,
-        Value.ShortValue _short,
         Value.IntValue _int,
         Value.LongValue _long,
         Value.DoubleValue _double,
@@ -59,9 +53,7 @@ public class TestValues {
     ) {}
 
     public record WrappedValueRecord(
-        WrappedValue.WrappedByteValue _byte,
         WrappedValue.WrappedCharValue _char,
-        WrappedValue.WrappedShortValue _short,
         WrappedValue.WrappedIntValue _int,
         WrappedValue.WrappedLongValue _long,
         WrappedValue.WrappedDoubleValue _double,
@@ -79,9 +71,7 @@ public class TestValues {
   }
 
   public static class WrappedValue {
-    public record WrappedByteValue(Value.ByteValue value) {}
     public record WrappedCharValue(Value.CharValue value) {}
-    public record WrappedShortValue(Value.ShortValue value) {}
     public record WrappedIntValue(Value.IntValue value) {}
     public record WrappedLongValue(Value.LongValue value) {}
     public record WrappedDoubleValue(Value.DoubleValue value) {}

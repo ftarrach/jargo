@@ -25,13 +25,11 @@ import static org.jargo.internal.R.getNameToPositionMap;
 import static org.jargo.internal.R.getRecordComponents;
 import static org.jargo.internal.R.getTargetByName;
 import static org.jargo.internal.R.isBoolean;
-import static org.jargo.internal.R.isByte;
 import static org.jargo.internal.R.isChar;
 import static org.jargo.internal.R.isDouble;
 import static org.jargo.internal.R.isInteger;
 import static org.jargo.internal.R.isLong;
 import static org.jargo.internal.R.isNotOptionalRecursive;
-import static org.jargo.internal.R.isShort;
 import static org.jargo.internal.R.isValueRecord;
 
 @SuppressWarnings("unchecked")
@@ -50,9 +48,7 @@ public class JargoDeserializer {
   }
 
   private <T> T doDeserialize(JsonParser parser, Target<?> target) throws IOException {
-    if (isByte(target.clazz())) return (T) deserializeByte(parser);
-    else if (isShort(target.clazz())) return (T) deserializeShort(parser);
-    else if (isInteger(target.clazz())) return (T) deserializeInt(parser);
+    if (isInteger(target.clazz())) return (T) deserializeInt(parser);
     else if (isChar(target.clazz())) return (T) deserializeCharacter(parser);
     else if (isLong(target.clazz())) return (T) deserializeLong(parser);
     else if (isDouble(target.clazz())) return (T) deserializeDouble(parser);
@@ -132,18 +128,10 @@ public class JargoDeserializer {
     return parser.getValueAsLong();
   }
 
-  private Byte deserializeByte(JsonParser parser) throws IOException {
-    return parser.getByteValue();
-  }
-
   private Character deserializeCharacter(JsonParser parser) throws IOException {
     String stringValue = parser.getValueAsString();
     if (stringValue.length() == 1) return stringValue.charAt(0);
     throw new IOException("expected character, got " + parser.currentToken());
-  }
-
-  private Short deserializeShort(JsonParser parser) throws IOException {
-    return parser.getShortValue();
   }
 
   private Integer deserializeInt(JsonParser parser) throws IOException {
