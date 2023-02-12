@@ -1,0 +1,29 @@
+instant	java.time.Instant	"2023-01-01T22:37:53Z"
+enum	org.jargo.TestValues$En$Colors	"RED"
+value boolean	org.jargo.TestValues$Value$BooleanValue	true
+value char	org.jargo.TestValues$Value$CharValue	"c"
+value double	org.jargo.TestValues$Value$DoubleValue	4.2
+value int	org.jargo.TestValues$Value$IntValue	2147483647
+value long	org.jargo.TestValues$Value$LongValue	9223372036854775807
+value string	org.jargo.TestValues$Value$StringValue	"Hello World"
+wrapped value boolean	org.jargo.TestValues$WrappedValue$WrappedBooleanValue	true
+wrapped value char	org.jargo.TestValues$WrappedValue$WrappedCharValue	"c"
+wrapped value double	org.jargo.TestValues$WrappedValue$WrappedDoubleValue	4.2
+wrapped value int	org.jargo.TestValues$WrappedValue$WrappedIntValue	2147483647
+wrapped value long	org.jargo.TestValues$WrappedValue$WrappedLongValue	9223372036854775807
+wrapped value string	org.jargo.TestValues$WrappedValue$WrappedStringValue	"Hello World"
+record of primitives	org.jargo.TestValues$Rec$PrimitiveRecord	{"_char":"f","_int":42,"_long":42,"_double":42.42,"_boolean":true,"string":"text"}
+record of values	org.jargo.TestValues$Rec$ValueRecord	{"_char":"f","_int":42,"_long":42,"_double":42.42,"_boolean":true,"string":"text"}
+record of wrapped values	org.jargo.TestValues$Rec$WrappedValueRecord	{"_char":"f","_int":42,"_long":42,"_double":42.42,"_boolean":true,"string":"text"}
+list of primitive	org.jargo.TestValues$Li$ListOfPrimitive	{"list":[1,2,3]}
+list of value	org.jargo.TestValues$Li$ListOfValue	{"list":[1,2,3]}
+list of record	org.jargo.TestValues$Li$ListOfRecord	{"list":[{"_char":"f","_int":42,"_long":42,"_double":42.42,"_boolean":true,"string":"text"}]}
+list of primitive	org.jargo.TestValues$Li$SetOfPrimitive	{"set":[1,2,3]}
+list of value	org.jargo.TestValues$Li$SetOfValue	{"set":[1,2,3]}
+set of record	org.jargo.TestValues$Li$SetOfRecord	{"set":[{"_char":"f","_int":42,"_long":42,"_double":42.42,"_boolean":true,"string":"text"}]}
+map of primitive	org.jargo.TestValues$MapValue$StringIntMapValue	{"1":1}
+enum map	org.jargo.TestValues$MapValue$EnumMapValue	{"RED":"red","GREEN":"green","BLUE":"blue"}
+optional record	org.jargo.TestValues$Rec$OptionalRecord	{"string":"present"}
+optional record absent	org.jargo.TestValues$Rec$OptionalRecord	{}
+optional record value	org.jargo.TestValues$Rec$OptionalRecordValue	{"string":"present"}
+optional record value absent	org.jargo.TestValues$Rec$OptionalRecordValue	{}
