@@ -4,8 +4,8 @@ Jargo is a small, lightweight, zero-configuration alternative to Jackson Databin
 
 The following Classes can be (de)serialized:
 
-- Primitives `byte`, `short`, `int`, `long`, `double`, `boolean`
-  - ... and their boxed equivalents in `java.lang`
+- `int`, `long`, `double`, `boolean`
+  - and their boxed equivalents in `java.lang`
 - `java.lang.String`
 - Enums
 - Records
@@ -54,6 +54,11 @@ public class JargoDemo {
   }
 }
 ```
+
+# Limitations
+
+- No support for classes that are not specified above
+- No deserialization support for interfaces
 
 # Contribute
 
