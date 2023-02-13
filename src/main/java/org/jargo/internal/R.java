@@ -10,19 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 class R {
 
-  record MetaRecord(
-      RecordComponent[] components,
-      Constructor<?> defaultConstructor,
-      Map<String, RecordComponent> componentByName,
-      Map<String, Integer> nameToPosition
-  ) {}
+  private record MetaRecord(RecordComponent[] components, Constructor<?> defaultConstructor,
+                    Map<String, RecordComponent> componentByName, Map<String, Integer> nameToPosition) {}
 
-  private static final Set<Class<?>> VALUE_RECORDS = ConcurrentHashMap.newKeySet();
+  private static final Map<Class<?>, Boolean> IS_VALUE_RECORD = new ConcurrentHashMap<>();
   private static final Map<Class<?>, Map<String, Object>> ENUMS = new ConcurrentHashMap<>();
   private static final Map<Class<?>, MetaRecord> RECORDS = new ConcurrentHashMap<>();
 
@@ -30,15 +25,16 @@ class R {
     return initCache(clazz).components();
   }
 
-  static boolean isValueRecord(Class<?> recordClass) {
-    if (VALUE_RECORDS.contains(recordClass)) return true;
-    if (recordClass.isRecord()) {
-      RecordComponent[] recordComponents = initCache(recordClass).components();
-      boolean isValueRecord = recordComponents.length == 1 && recordComponents[0].getName().equals("value");
-      if (isValueRecord) VALUE_RECORDS.add(recordClass);
-      return isValueRecord;
+  static boolean isValueRecord(Class<?> clazz) {
+    Boolean result = IS_VALUE_RECORD.get(clazz);
+    if (result != null) return result;
+    result = false;
+    if (clazz.isRecord()) {
+      RecordComponent[] recordComponents = initCache(clazz).components();
+      result = recordComponents.length == 1 && recordComponents[0].getName().equals("value");
     }
-    return false;
+    IS_VALUE_RECORD.put(clazz, result);
+    return result;
   }
 
   static Object getRecordComponentValue(Record record, String name) throws IOException {
@@ -134,14 +130,6 @@ class R {
 
   static boolean isChar(Type target) {
     return char.class == target || Character.class == target;
-  }
-
-  static boolean isShort(Type target) {
-    return short.class == target || Short.class == target;
-  }
-
-  static boolean isByte(Type target) {
-    return byte.class == target || Byte.class == target;
   }
 
   static Target<?> getTargetByName(Class<? extends Record> clazz, String name) {
