@@ -27,3 +27,5 @@ optional record	org.jargo.TestValues$Rec$OptionalRecord	{"string":"present"}
 optional record absent	org.jargo.TestValues$Rec$OptionalRecord	{}
 optional record value	org.jargo.TestValues$Rec$OptionalRecordValue	{"string":"present"}
 optional record value absent	org.jargo.TestValues$Rec$OptionalRecordValue	{}
+record with optional absent	org.jargo.TestValues$Rec$RecordWithOptional	{"string":"text"}
+record with optional present	org.jargo.TestValues$Rec$RecordWithOptional	{"string":"text","optString":"present"}

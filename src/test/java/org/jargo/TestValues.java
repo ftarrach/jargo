@@ -71,6 +71,11 @@ public class TestValues {
     public record OptionalRecordValue(
         OptionalValue.OptionalString string
     ) {}
+
+    public record RecordWithOptional(
+        String string,
+        Optional<String> optString
+    ) {}
   }
 
   public static class WrappedValue {
