@@ -132,21 +132,24 @@ class R {
     return char.class == target || Character.class == target;
   }
 
-  static Target<?> getTargetByName(Class<? extends Record> clazz, String name) {
+  static Optional<Target<?>> getTargetByName(Class<? extends Record> clazz, String name) {
     RecordComponent recordComponent = initCache(clazz).componentByName().get(name);
+    if (recordComponent == null) {
+      return Optional.empty();
+    }
     Class<?> type = recordComponent.getType();
     if (List.class == type) {
       Class<?> generic = (Class<?>) ((ParameterizedType) recordComponent.getGenericType()).getActualTypeArguments()[0];
-      return new Target<>(type, List.of(generic));
+      return Optional.of(new Target<>(type, List.of(generic)));
     } else if (Map.class == type) {
       Type[] typeArguments = ((ParameterizedType) recordComponent.getGenericType()).getActualTypeArguments();
       Class<?> key = (Class<?>) typeArguments[0];
       Class<?> value = (Class<?>) typeArguments[1];
-      return new Target<>(type, List.of(key, value));
+      return Optional.of(new Target<>(type, List.of(key, value)));
     } else if (Optional.class == type) {
       Class<?> generic = (Class<?>) ((ParameterizedType) recordComponent.getGenericType()).getActualTypeArguments()[0];
-      return new Target<>(type, List.of(generic));
+      return Optional.of(new Target<>(type, List.of(generic)));
     }
-    return new Target<>(type, List.of());
+    return Optional.of(new Target<>(type, List.of()));
   }
 }

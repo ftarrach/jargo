@@ -34,6 +34,9 @@ public class TestValues {
   }
 
   public static class Rec {
+
+    public record SimpleTuple(String first, String second) {}
+
     public record PrimitiveRecord(
         char _char,
         int _int,
