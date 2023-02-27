@@ -2,6 +2,7 @@ package org.jargo.internal;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import org.jargo.Serializer;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,6 +10,7 @@ import java.lang.reflect.RecordComponent;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,9 +21,14 @@ import static org.jargo.internal.R.isValueRecord;
 public class JargoSerializer {
 
   private final JsonFactory jsonFactory;
+  private final Map<Class<?>, Serializer<?>> customSerializer = new HashMap<>();
 
   public JargoSerializer(JsonFactory jsonFactory) {
     this.jsonFactory = jsonFactory;
+  }
+
+  public <T> void register(Class<T> clazz, Serializer<T> serializer) {
+    customSerializer.put(clazz, serializer);
   }
 
   public void serialize(Object object, OutputStream outputStream) throws IOException {
@@ -31,7 +38,9 @@ public class JargoSerializer {
   }
 
   private void doSerialize(JsonGenerator generator, Object object) throws IOException {
-    if (object == null) { /* omit null values */ }
+    Serializer<Object> serializer = (Serializer<Object>) customSerializer.get(object != null ? object.getClass() : null);
+    if (serializer != null) serializer.serialize(generator, object);
+    else if (object == null) { /* omit null values */ }
     else if (Character.class.equals(object.getClass())) generator.writeString(String.valueOf(object));
     else if (Integer.class.equals(object.getClass())) generator.writeNumber((int) object);
     else if (Long.class.equals(object.getClass())) generator.writeNumber((long) object);

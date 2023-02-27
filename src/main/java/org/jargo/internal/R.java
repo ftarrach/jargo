@@ -1,5 +1,7 @@
 package org.jargo.internal;
 
+import org.jargo.Target;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;

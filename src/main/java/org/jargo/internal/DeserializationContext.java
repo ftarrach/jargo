@@ -3,6 +3,8 @@ package org.jargo.internal;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
+import org.jargo.Deserializer;
+import org.jargo.Target;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -37,15 +39,19 @@ class DeserializationContext {
 
   private final JsonParser parser;
   private final Stack<String> stack = new Stack<>();
+  private final Map<Class<?>, Deserializer<?>> customDeserializer;
 
-  public DeserializationContext(JsonParser parser) {
+  public DeserializationContext(JsonParser parser, Map<Class<?>, Deserializer<?>> customDeserializer) {
     this.parser = parser;
+    this.customDeserializer = customDeserializer;
   }
 
   <T> T doDeserialize(String ctx, Target<?> target) throws IOException {
     stack.push(ctx);
     Object result;
-    if (isInteger(target.clazz())) result = deserializeInt();
+    Deserializer<Object> deserializer = (Deserializer<Object>) customDeserializer.get(target.clazz());
+    if (deserializer != null) result = deserializer.deserialize(target, parser);
+    else if (isInteger(target.clazz())) result = deserializeInt();
     else if (isChar(target.clazz())) result = deserializeCharacter();
     else if (isLong(target.clazz())) result = deserializeLong();
     else if (isDouble(target.clazz())) result = deserializeDouble();
