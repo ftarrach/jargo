@@ -171,12 +171,10 @@ class DeserializationContext {
     throw unmetExpectation("number");
   }
 
-  private <T> T deserializeRecord(Target<? extends Record> target) throws IOException {
-    stack.push("{");
-    Object result;
-    if (isValueRecord(target.clazz())) result = deserializeValueRecord(target);
-    else result = this.deserializeDataRecord(target);
-    return (T) result;
+  private <T extends Record> T deserializeRecord(Target<T> target) throws IOException {
+    return isValueRecord(target.clazz())
+        ? deserializeValueRecord(target)
+        : deserializeDataRecord(target);
   }
 
   private <T extends Record> T deserializeValueRecord(Target<T> target) throws IOException {

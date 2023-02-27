@@ -46,7 +46,7 @@ class R {
   }
 
   @SuppressWarnings("unchecked")
-  static <T> Constructor<T> getDefaultRecordConstructor(Class<T> recordClass) {
+  static <T extends Record> Constructor<T> getDefaultRecordConstructor(Class<T> recordClass) {
     return (Constructor<T>) initCache(recordClass).defaultConstructor();
   }
 
